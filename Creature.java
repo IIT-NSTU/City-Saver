@@ -3,12 +3,13 @@ package citySaver.entities.creatures;
 import citySaver.Game;
 import citySaver.Handler;
 import citySaver.entities.Entity;
+import citySaver.tiles.Tile;
 
 public abstract class Creature extends Entity{
 	public static final int DEFAULT_HEALTH = 10;
 	public static final float DEFAULT_SPEED = 3.0f;
-	public static final int DEFAULT_CREATURE_WIDTH = 32,
-	                        DEFAULT_CREATURE_HEIGHT = 32;
+	public static final int DEFAULT_CREATURE_WIDTH = 16,
+	                        DEFAULT_CREATURE_HEIGHT = 16;
 	 
 	
 	protected int health;
@@ -26,9 +27,56 @@ public abstract class Creature extends Entity{
 	}
 	
 	public void move() {
-		x += xMove;
-		y += yMove;
+		moveX();
+		moveY();
+		
 	}
+	
+	public void moveX() {
+		if(xMove>0) {//moving right
+			int tx = (int) (x + xMove + bounds.x + bounds.width)/Tile.TILEWIDTH;
+			if(!CollisionWithTile(tx,(int) (y + bounds.y)/Tile.TILEHEIGHT)&&!CollisionWithTile(tx,(int) (y + bounds.y + bounds.height)/Tile.TILEHEIGHT)) {
+				x +=xMove;
+			}
+			else {
+				x = tx * Tile.TILEWIDTH - bounds.x -bounds.width-7;
+			}
+		}
+		else if(xMove<0) {//moving left
+			int tx = (int) (x + xMove + bounds.x )/Tile.TILEWIDTH;
+			if(!CollisionWithTile(tx,(int) (y + bounds.y)/Tile.TILEHEIGHT)&&!CollisionWithTile(tx,(int) (y + bounds.y + bounds.height)/Tile.TILEHEIGHT)) {
+				x +=xMove;
+			}
+			else {
+				x = tx * Tile.TILEWIDTH  + Tile.TILEWIDTH - bounds.x+7;
+			}
+		}
+	}
+	
+    public void moveY() {
+    	if(yMove<0) {//up
+    		int ty = (int) (y + yMove + bounds.y )/Tile.TILEHEIGHT;
+			if(!CollisionWithTile((int)(x + bounds.x)/Tile.TILEWIDTH,ty)&&!CollisionWithTile((int)(x + bounds.x + bounds.width)/Tile.TILEWIDTH,ty)) {
+				y +=yMove;
+			}
+			else {
+				y = ty * Tile.TILEHEIGHT  + Tile.TILEHEIGHT - bounds.y;
+			}
+    	}
+    	else if(yMove>0) {//down
+    		int ty = (int) (y + yMove + bounds.y+bounds.height )/Tile.TILEHEIGHT;
+			if(!CollisionWithTile((int)(x + bounds.x)/Tile.TILEWIDTH,ty)&&!CollisionWithTile((int)(x + bounds.x + bounds.width)/Tile.TILEWIDTH,ty)) {
+				y +=yMove;
+			}
+			else {
+				y = ty * Tile.TILEHEIGHT - bounds.y -bounds.height-7;
+			}
+    	}
+	}
+    
+    protected boolean CollisionWithTile(int x, int y) {
+    	return handler.getWorld().getTile(x, y).isSolid();
+    }
 
 //GETTERS and SETTERS
 
