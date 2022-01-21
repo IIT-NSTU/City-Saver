@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 
 import gfx.ImageLoader;
 
-//hello
 
 public class Assets {
 
